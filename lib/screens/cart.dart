@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 
 class CartPage extends StatelessWidget {
-  const CartPage({super.key});
+  final List<Map<String, dynamic>> cartItems;
+  final Function(int)? onRemove; // Callback function
 
-  // Shared Rainbow Gradient from your Dashboard
+  const CartPage({
+    super.key, 
+    this.cartItems = const [], 
+    this.onRemove,
+  });
+
   static const Gradient rainbowGradient = LinearGradient(
     colors: [
-      Color(0xFF9C27B0), // 0%
-      Color(0xFFFF4081), // 25%
-      Color(0xFF00E5FF), // 75%
-      Color(0xFFFFD740), // 100%
+      Color(0xFF9C27B0),
+      Color(0xFFFF4081),
+      Color(0xFF00E5FF),
+      Color(0xFFFFD740),
     ],
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
@@ -17,22 +23,23 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate total price based on items currently in list
+    double total = cartItems.fold(0, (sum, item) {
+      String priceStr = item['price'].replaceAll('₱', '').replaceAll(',', '').trim();
+      return sum + (double.tryParse(priceStr) ?? 0);
+    });
+
     return Scaffold(
       backgroundColor: const Color(0xFF050011),
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 60),
-            // Header: Added Back Button + Your Logo/Title
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  Image.asset('assets/logo.png', width: 65, height: 65),
+                  Image.asset('assets/logo.png', width: 65, height: 65, errorBuilder: (c,o,s) => const Icon(Icons.shopping_cart, color: Colors.white)),
                   const SizedBox(width: 15),
                   ShaderMask(
                     shaderCallback: (bounds) => rainbowGradient.createShader(
@@ -40,53 +47,52 @@ class CartPage extends StatelessWidget {
                     ),
                     child: const Text(
                       "Cart",
-                      style: TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                      style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 30),
-
-            // Main Cart Section with your "Dent" design
             Stack(
               clipBehavior: Clip.none,
               alignment: Alignment.topCenter,
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width * 0.9,
-                  height: 663,
+                  constraints: const BoxConstraints(minHeight: 450),
                   decoration: BoxDecoration(
                     color: const Color(0xFF121212),
                     borderRadius: BorderRadius.circular(37),
                     boxShadow: [
-                      BoxShadow(
-                        color: Colors.white.withOpacity(0.15),
-                        offset: const Offset(0, -1),
-                        blurRadius: 4,
-                      ),
+                      BoxShadow(color: Colors.white.withOpacity(0.15), offset: const Offset(0, -1), blurRadius: 4),
                     ],
                   ),
                   child: Column(
                     children: [
-                      const SizedBox(height: 60), 
-                      _buildCartItem(),
-                      _buildDivider(),
-                      _buildCartItem(),
-                      _buildDivider(),
-                      _buildCartItem(),
-                      const Spacer(),
+                      const SizedBox(height: 60),
                       
-                      // Total Section with your custom clipper
+                      // --- CART ITEMS LOGIC ---
+                      if (cartItems.isEmpty)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 100),
+                          child: Text("Your cart is empty!", style: TextStyle(color: Colors.white54, fontSize: 16)),
+                        )
+                      else
+                        // Use a loop to build items with their specific index
+                        for (int i = 0; i < cartItems.length; i++)
+                          Column(
+                            children: [
+                              _buildCartItem(cartItems[i], i),
+                              _buildDivider(),
+                            ],
+                          ),
+
+                      const SizedBox(height: 20),
                       ClipPath(
                         clipper: TotalSectionClipper(),
                         child: Container(
                           width: double.infinity,
-                          height: 289,
                           color: Colors.white,
                           padding: const EdgeInsets.all(25),
                           child: Column(
@@ -94,9 +100,9 @@ class CartPage extends StatelessWidget {
                               const SizedBox(height: 40),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: const [
-                                  Text("Total Amount", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
-                                  Text("₱ 5,000", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF7A56AE))),
+                                children: [
+                                  const Text("Total Amount", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+                                  Text("₱ ${total.toStringAsFixed(0)}", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF7A56AE))),
                                 ],
                               ),
                               const SizedBox(height: 30),
@@ -108,41 +114,29 @@ class CartPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Floating Cylinder in the Top Dent
                 Positioned(
                   top: 10,
                   child: Container(
-                    width: 60,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF7A56AE),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                    width: 60, height: 8,
+                    decoration: BoxDecoration(color: const Color(0xFF7A56AE), borderRadius: BorderRadius.circular(10)),
                   ),
                 ),
               ],
             ),
+            const SizedBox(height: 120), // Bottom spacing for navigation
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(context),
     );
   }
 
   Widget _buildCheckoutButton() {
     return Container(
-      width: 198,
-      height: 61,
+      width: 198, height: 61,
       decoration: BoxDecoration(
         gradient: rainbowGradient,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFFFF4081).withOpacity(0.5),
-            offset: const Offset(0, 4),
-            blurRadius: 6,
-          ),
-        ],
+        boxShadow: [BoxShadow(color: const Color(0xFFFF4081).withOpacity(0.5), offset: const Offset(0, 4), blurRadius: 6)],
       ),
       child: const Center(
         child: Text("Checkout", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
@@ -150,31 +144,35 @@ class CartPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCartItem() {
+  Widget _buildCartItem(Map<String, dynamic> item, int index) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
       child: Row(
         children: [
           Container(
-            width: 72,
-            height: 72,
+            width: 72, height: 72,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(colors: [Color(0xFFB19DCC), Color(0xFF121212)], begin: Alignment.topCenter, end: Alignment.bottomCenter),
             ),
-            child: Center(child: Image.asset('assets/character.png', width: 63, height: 63)),
+            child: Center(child: Image.asset(item['image'], width: 63, height: 63, errorBuilder: (c, o, s) => const Icon(Icons.image, color: Colors.white))),
           ),
           const SizedBox(width: 15),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Herta Kuru-kuru", style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
-                Text("1 piece", style: TextStyle(color: Colors.white70, fontSize: 11)),
+                Text(item['name'], style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
+                const Text("1 piece", style: TextStyle(color: Colors.white70, fontSize: 11)),
               ],
             ),
           ),
-          const Text("₱ 5,000", style: TextStyle(color: Color(0xFFB19DCC), fontSize: 13, fontWeight: FontWeight.bold)),
+          // REMOVE BUTTON
+          IconButton(
+            onPressed: () => onRemove?.call(index),
+            icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 22),
+          ),
+          Text(item['price'], style: const TextStyle(color: Color(0xFFB19DCC), fontSize: 13, fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -183,33 +181,16 @@ class CartPage extends StatelessWidget {
   Widget _buildDivider() {
     return Center(
       child: Container(
-        width: 331,
-        height: 1,
-        color: const Color(0xFF7A56AE).withOpacity(0.5),
+        width: 300, height: 1,
+        color: const Color(0xFF7A56AE).withOpacity(0.2),
       ),
     );
-  }
-
-  Widget _buildBottomNav(BuildContext context) {
-    return BottomAppBar(
-        color: const Color(0xFF121212),
-        child: SizedBox(
-          height: 60.0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              IconButton(icon: const Icon(Icons.home, color: Colors.grey), onPressed: () => Navigator.pop(context)),
-              IconButton(icon: const Icon(Icons.person_outline, color: Colors.grey), onPressed: () => Navigator.pop(context)),
-            ],
-          ),
-        ),
-      );
   }
 }
 
 class TotalSectionClipper extends CustomClipper<Path> {
   @override
-  Path getPath(Size size) {
+  Path getClip(Size size) {
     Path path = Path();
     double dentWidth = 120;
     double dentHeight = 40;
@@ -225,9 +206,4 @@ class TotalSectionClipper extends CustomClipper<Path> {
   }
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-
-  @override
-  Path getClip(Size size) {
-    return getPath(size);
-  }
 }
