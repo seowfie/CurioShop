@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'profile.dart'; // Ensure this file exists
-import 'cart.dart';    // Ensure this file exists
+import 'profile.dart'; 
+import 'cart.dart';    
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -14,14 +14,17 @@ class _DashboardPageState extends State<DashboardPage> {
   int _selectedIndex = 0;
   String _searchKeyword = "";
   String _selectedTag = "All";
+  
+  // The "Source of Truth" for your cart
+  final List<Map<String, dynamic>> _cartItems = [];
 
   // --- STYLE CONSTANTS ---
   static const Gradient rainbowGradient = LinearGradient(
     colors: [
-      Color(0xFF9C27B0), // Purple
-      Color(0xFFFF4081), // Pink
-      Color(0xFF00E5FF), // Cyan
-      Color(0xFFFFD740), // Gold/Yellow
+      Color(0xFF9C27B0), 
+      Color(0xFFFF4081), 
+      Color(0xFF00E5FF), 
+      Color(0xFFFFD740), 
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -47,6 +50,33 @@ class _DashboardPageState extends State<DashboardPage> {
     }).toList();
   }
 
+  // --- LOGIC ---
+  void _addToCart(Map<String, dynamic> product) {
+    setState(() {
+      _cartItems.add(product);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("${product['name']} added to cart!"),
+        duration: const Duration(milliseconds: 800),
+        backgroundColor: const Color(0xFF9C27B0),
+      ),
+    );
+  }
+
+  void _removeFromCart(int index) {
+    setState(() {
+      _cartItems.removeAt(index);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Item removed from cart"),
+        duration: Duration(milliseconds: 600),
+        backgroundColor: Colors.redAccent,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,19 +84,19 @@ class _DashboardPageState extends State<DashboardPage> {
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
-          // 1. MAIN CONTENT AREA
           Positioned.fill(
             child: IndexedStack(
               index: _selectedIndex,
               children: [
-                _buildHomeContent(),        // Index 0: Home
-                const CartPage(),           // Index 1: Cart (External File)
-                const ProfilePage(),        // Index 2: Profile (External File)
+                _buildHomeContent(),        
+                CartPage(
+                  cartItems: _cartItems, 
+                  onRemove: _removeFromCart, // Passing the function to the child
+                ),
+                const ProfilePage(),        
               ],
             ),
           ),
-
-          // 2. CUSTOM BOTTOM NAVIGATION BAR
           Positioned(
             bottom: 0,
             left: 0,
@@ -78,22 +108,17 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  // ==========================================
-  // TAB 1: HOME CONTENT
-  // ==========================================
   Widget _buildHomeContent() {
     bool isFiltering = _searchKeyword.isNotEmpty || _selectedTag != "All";
     
-    // Wrapped in SingleChildScrollView so everything (including search bar) scrolls
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.only(bottom: 120), // Bottom padding for Nav Bar
+      padding: const EdgeInsets.only(bottom: 120),
       child: SafeArea(
         bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- HEADER ---
             Padding(
               padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
               child: Row(
@@ -115,10 +140,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ],
               ),
             ),
-            
             const SizedBox(height: 25),
-
-            // --- HOT TAGS ---
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
               child: Text("Hot Tags", style: TextStyle(color: Colors.white70, fontSize: 14)),
@@ -149,10 +171,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 }).toList(),
               ),
             ),
-
             const SizedBox(height: 25),
-
-            // --- SEARCH BAR ---
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Row(
@@ -178,10 +197,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ],
               ),
             ),
-            
             const SizedBox(height: 20),
-
-            // --- PRODUCT LISTS ---
             isFiltering ? _buildSearchResults() : _buildStandardLayout(),
           ],
         ),
@@ -189,9 +205,6 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  // ==========================================
-  // HELPER WIDGETS
-  // ==========================================
   Widget _buildStandardLayout() {
     return Column(
       children: [
@@ -211,16 +224,12 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget _buildSearchResults() {
     final results = _filteredProducts;
     if (results.isEmpty) return const Center(child: Text("No items found!", style: TextStyle(color: Colors.grey)));
-    
     return GridView.builder(
       shrinkWrap: true, 
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 20),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, 
-        crossAxisSpacing: 15, 
-        mainAxisSpacing: 15, 
-        childAspectRatio: 0.75
+        crossAxisCount: 2, crossAxisSpacing: 15, mainAxisSpacing: 15, childAspectRatio: 0.75
       ),
       itemCount: results.length,
       itemBuilder: (context, index) => _buildProductCard(results[index], isGrid: true),
@@ -268,7 +277,17 @@ class _DashboardPageState extends State<DashboardPage> {
             child: Stack(
               children: [
                 Center(child: Padding(padding: const EdgeInsets.all(10.0), child: Image.asset(product['image'], fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.image_not_supported, color: Colors.white10, size: 50)))),
-                Positioned(top: 10, right: 10, child: Container(padding: const EdgeInsets.all(6), decoration: const BoxDecoration(color: Color(0xFF9C27B0), shape: BoxShape.circle), child: const Icon(Icons.shopping_bag, size: 14, color: Colors.white))),
+                Positioned(
+                  top: 10, right: 10, 
+                  child: GestureDetector(
+                    onTap: () => _addToCart(product),
+                    child: Container(
+                      padding: const EdgeInsets.all(6), 
+                      decoration: const BoxDecoration(color: Color(0xFF9C27B0), shape: BoxShape.circle), 
+                      child: const Icon(Icons.shopping_bag, size: 14, color: Colors.white)
+                    ),
+                  )
+                ),
               ],
             ),
           ),
@@ -289,9 +308,6 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  // ==========================================
-  // CUSTOM NAVBAR
-  // ==========================================
   Widget _buildCustomBottomNavBar() {
     const double barHeight = 80;
     return SizedBox(
@@ -300,14 +316,11 @@ class _DashboardPageState extends State<DashboardPage> {
         clipBehavior: Clip.none,
         alignment: Alignment.bottomCenter,
         children: [
-          // Background Curve
           CustomPaint(
             size: Size(MediaQuery.of(context).size.width, barHeight),
             painter: LiquidCurvePainter(_selectedIndex, 3),
             child: Container(height: barHeight),
           ),
-          
-          // Icon Row
           SizedBox(
             height: barHeight + 20,
             child: Row(
@@ -327,35 +340,24 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildNavItem(int index, String iconPath) {
     bool isSelected = _selectedIndex == index;
-
     return GestureDetector(
       onTap: () => setState(() => _selectedIndex = index),
       behavior: HitTestBehavior.translucent,
       child: SizedBox(
-        width: 70, 
-        height: 100, 
+        width: 70, height: 100, 
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOutBack,
-              // Lift margin: 25px when selected, 20px when not
               margin: EdgeInsets.only(bottom: isSelected ? 25 : 20), 
-              
-              // --- ICON SIZES (UPDATED) ---
-              // Selected: 45px
-              // Unselected: 38px (Increased from 30)
-              height: isSelected ? 45 : 38, 
-              width: isSelected ? 45 : 38,
-              
+              height: isSelected ? 45 : 38, width: isSelected ? 45 : 38,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: isSelected ? Colors.white : Colors.transparent,
                 shape: BoxShape.circle,
-                boxShadow: isSelected
-                    ? [BoxShadow(color: Colors.purpleAccent.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))]
-                    : null,
+                boxShadow: isSelected ? [BoxShadow(color: Colors.purpleAccent.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))] : null,
               ),
               child: isSelected
                   ? ShaderMask(
@@ -372,8 +374,6 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 }
 
-// ================= PAINTER =================
-
 class LiquidCurvePainter extends CustomPainter {
   final int selectedIndex;
   final int itemsCount;
@@ -384,17 +384,14 @@ class LiquidCurvePainter extends CustomPainter {
     final path = Path();
     double itemWidth = size.width / itemsCount;
     double center = (selectedIndex * itemWidth) + (itemWidth / 2);
-    
     path.moveTo(0, 0); 
     path.lineTo(center - 60, 0);
-    // Smooth curve -25px depth
     path.cubicTo(center - 30, 0, center - 35, -25, center, -25);
     path.cubicTo(center + 35, -25, center + 30, 0, center + 60, 0);
     path.lineTo(size.width, 0);
     path.lineTo(size.width, size.height);
     path.lineTo(0, size.height);
     path.close();
-    
     canvas.drawShadow(path, Colors.black.withOpacity(0.5), 8.0, true);
     canvas.drawPath(path, paint);
   }
