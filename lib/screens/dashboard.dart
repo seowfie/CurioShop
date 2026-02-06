@@ -15,7 +15,7 @@ class _DashboardPageState extends State<DashboardPage> {
   String _searchKeyword = "";
   String _selectedTag = "All";
   
-  // The "Source of Truth" for your cart
+  // Cart Logic
   final List<Map<String, dynamic>> _cartItems = [];
 
   // --- STYLE CONSTANTS ---
@@ -84,6 +84,7 @@ class _DashboardPageState extends State<DashboardPage> {
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
+          // 1. MAIN CONTENT AREA
           Positioned.fill(
             child: IndexedStack(
               index: _selectedIndex,
@@ -91,12 +92,14 @@ class _DashboardPageState extends State<DashboardPage> {
                 _buildHomeContent(),        
                 CartPage(
                   cartItems: _cartItems, 
-                  onRemove: _removeFromCart, // Passing the function to the child
+                  onRemove: _removeFromCart,
                 ),
                 const ProfilePage(),        
               ],
             ),
           ),
+
+          // 2. FLAT BOTTOM NAVIGATION BAR
           Positioned(
             bottom: 0,
             left: 0,
@@ -108,22 +111,31 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  // ==========================================
+  // TAB 1: HOME CONTENT
+  // ==========================================
   Widget _buildHomeContent() {
     bool isFiltering = _searchKeyword.isNotEmpty || _selectedTag != "All";
     
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.only(bottom: 120),
+      padding: const EdgeInsets.only(bottom: 120), // Padding to clear the navbar
       child: SafeArea(
         bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // HEADER
             Padding(
               padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
               child: Row(
                 children: [
-                  Image.asset('assets/logo.png', height: 50, fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.star, size: 40, color: Colors.white)),
+                  Image.asset(
+                    'assets/logo.png', 
+                    height: 50, 
+                    fit: BoxFit.contain, 
+                    errorBuilder: (c, o, s) => const Icon(Icons.star, size: 40, color: Colors.white)
+                  ),
                   const SizedBox(width: 15),
                   Expanded(
                     child: Column(
@@ -140,7 +152,10 @@ class _DashboardPageState extends State<DashboardPage> {
                 ],
               ),
             ),
+            
             const SizedBox(height: 25),
+
+            // HOT TAGS
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
               child: Text("Hot Tags", style: TextStyle(color: Colors.white70, fontSize: 14)),
@@ -171,7 +186,10 @@ class _DashboardPageState extends State<DashboardPage> {
                 }).toList(),
               ),
             ),
+
             const SizedBox(height: 25),
+
+            // SEARCH BAR
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Row(
@@ -197,7 +215,10 @@ class _DashboardPageState extends State<DashboardPage> {
                 ],
               ),
             ),
+            
             const SizedBox(height: 20),
+
+            // CONTENT BODY
             isFiltering ? _buildSearchResults() : _buildStandardLayout(),
           ],
         ),
@@ -205,6 +226,9 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  // ==========================================
+  // HELPER WIDGETS
+  // ==========================================
   Widget _buildStandardLayout() {
     return Column(
       children: [
@@ -308,93 +332,66 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  // ==========================================
+  // FLAT CUSTOM NAVBAR
+  // ==========================================
   Widget _buildCustomBottomNavBar() {
-    const double barHeight = 80;
-    return SizedBox(
-      height: barHeight + 20,
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.bottomCenter,
-        children: [
-          CustomPaint(
-            size: Size(MediaQuery.of(context).size.width, barHeight),
-            painter: LiquidCurvePainter(_selectedIndex, 3),
-            child: Container(height: barHeight),
-          ),
-          SizedBox(
-            height: barHeight + 20,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                _buildNavItem(0, 'assets/home.png'),
-                _buildNavItem(1, 'assets/cart.png'),
-                _buildNavItem(2, 'assets/profile.png'),
-              ],
-            ),
-          ),
+    return Container(
+      height: 90, 
+      decoration: const BoxDecoration(
+        color: Color(0xFF1A1A2E), 
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black45,
+            blurRadius: 10,
+            offset: Offset(0, -5),
+          )
         ],
+      ),
+      child: SafeArea(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(0, 'assets/home.png'),
+            _buildNavItem(1, 'assets/cart.png'),
+            _buildNavItem(2, 'assets/profile.png'),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildNavItem(int index, String iconPath) {
     bool isSelected = _selectedIndex == index;
+
     return GestureDetector(
       onTap: () => setState(() => _selectedIndex = index),
       behavior: HitTestBehavior.translucent,
-      child: SizedBox(
-        width: 70, height: 100, 
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutBack,
-              margin: EdgeInsets.only(bottom: isSelected ? 25 : 20), 
-              height: isSelected ? 45 : 38, width: isSelected ? 45 : 38,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: isSelected ? Colors.white : Colors.transparent,
-                shape: BoxShape.circle,
-                boxShadow: isSelected ? [BoxShadow(color: Colors.purpleAccent.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))] : null,
+      child: Container(
+        padding: const EdgeInsets.all(20), // Generous padding for touch target
+        child: isSelected
+            ? ShaderMask(
+                shaderCallback: (bounds) => rainbowGradient.createShader(bounds),
+                child: Image.asset(
+                  iconPath, 
+                  color: Colors.white, // Required for ShaderMask
+                  width: 26, // Smaller Active Size
+                  height: 26,
+                  fit: BoxFit.contain
+                ),
+              )
+            : Image.asset(
+                iconPath, 
+                color: Colors.white70, 
+                width: 24, // Smaller Inactive Size
+                height: 24,
+                fit: BoxFit.contain
               ),
-              child: isSelected
-                  ? ShaderMask(
-                      shaderCallback: (bounds) => rainbowGradient.createShader(bounds),
-                      child: Image.asset(iconPath, color: Colors.white, fit: BoxFit.contain),
-                    )
-                  : Image.asset(iconPath, color: Colors.white70, fit: BoxFit.contain),
-            ),
-            const SizedBox(height: 15), 
-          ],
-        ),
       ),
     );
   }
-}
-
-class LiquidCurvePainter extends CustomPainter {
-  final int selectedIndex;
-  final int itemsCount;
-  LiquidCurvePainter(this.selectedIndex, this.itemsCount);
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = const Color(0xFF1A1A2E)..style = PaintingStyle.fill;
-    final path = Path();
-    double itemWidth = size.width / itemsCount;
-    double center = (selectedIndex * itemWidth) + (itemWidth / 2);
-    path.moveTo(0, 0); 
-    path.lineTo(center - 60, 0);
-    path.cubicTo(center - 30, 0, center - 35, -25, center, -25);
-    path.cubicTo(center + 35, -25, center + 30, 0, center + 60, 0);
-    path.lineTo(size.width, 0);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-    canvas.drawShadow(path, Colors.black.withOpacity(0.5), 8.0, true);
-    canvas.drawPath(path, paint);
-  }
-  @override
-  bool shouldRepaint(covariant LiquidCurvePainter oldDelegate) => oldDelegate.selectedIndex != selectedIndex;
 }
