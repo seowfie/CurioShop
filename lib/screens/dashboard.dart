@@ -34,12 +34,29 @@ class _DashboardPageState extends State<DashboardPage> {
   final List<String> hotTags = ["All", "Anime", "Western", "K-pop", "Video Game"];
 
   final List<Map<String, dynamic>> allProducts = [
-    {'name': 'Herta Kuru-kuru', 'price': '₱ 5,000', 'image': 'assets/character.png', 'category': 'Anime'},
-    {'name': 'Stellar Witch', 'price': '₱ 4,500', 'image': 'assets/character.png', 'category': 'Anime'},
-    {'name': 'Iron Man MK50', 'price': '₱ 12,500', 'image': 'assets/character.png', 'category': 'Western'},
-    {'name': 'BTS Lightstick', 'price': '₱ 3,200', 'image': 'assets/character.png', 'category': 'K-pop'},
-    {'name': 'Master Chief', 'price': '₱ 8,000', 'image': 'assets/character.png', 'category': 'Video Game'},
-    {'name': 'Galactic Ranger', 'price': '₱ 6,200', 'image': 'assets/character.png', 'category': 'Anime'},
+    // --- ANIME ---
+    {'name': 'Satoru Gojo 1/7 Scale', 'price': '₱ 7,200', 'image': 'assets/gojo.jpg', 'category': 'Anime', 'featured': true},
+    {'name': 'Frieren the Slayer Luminasta', 'price': '₱ 4,800', 'image': 'assets/frieren.jpg', 'category': 'Anime', 'featured': false},
+    {'name': 'GSC Ultimate Madoka', 'price': '₱ 15,000', 'image': 'assets/madoka.jpg', 'category': 'Anime', 'featured': false},
+    {'name': 'Anya and Bond Forger Sleepy', 'price': '₱ 3,200', 'image': 'assets/anya.jpg', 'category': 'Anime', 'featured': false},
+
+    // --- WESTERN ---
+    {'name': 'Winter Soldier Bucky Barnes', 'price': '₱ 12,500', 'image': 'assets/bucky.jpg', 'category': 'Western', 'featured': true},
+    {'name': 'Super Mario Original 1/4', 'price': '₱ 25,000', 'image': 'assets/mario.jpg', 'category': 'Western', 'featured': false},
+    {'name': 'Iron Man Mark 80 Exclusive', 'price': '₱ 22,000', 'image': 'assets/ironman.jpg', 'category': 'Western', 'featured': false},
+    {'name': 'Wonder Woman 1/9 Justice League', 'price': '₱ 9,000', 'image': 'assets/wonderwoman.jpg', 'category': 'Western', 'featured': false},
+    {'name': 'Scarlet Witch Darkhold Statue', 'price': '₱ 11,500', 'image': 'assets/scarletwitch.jpg', 'category': 'Western', 'featured': false},
+
+    // --- K-POP ---
+    {'name': 'NewJeans Binky Bong', 'price': '₱ 3,500', 'image': 'assets/njz.jpg', 'category': 'K-pop', 'featured': true},
+    {'name': 'BTS Army Bomb Ver 4', 'price': '₱ 3,800', 'image': 'assets/bts.jpg', 'category': 'K-pop', 'featured': false},
+    {'name': 'TWICE CandyBong', 'price': '₱ 3,500', 'image': 'assets/twice.jpg', 'category': 'K-pop', 'featured': false},
+    {'name': 'LE SSERAFIM FimBong', 'price': '₱ 3,600', 'image': 'assets/lesserafim.jpg', 'category': 'K-pop', 'featured': false},
+
+    // --- VIDEO GAME ---
+    {'name': 'The Herta Star Rail LIVE Ver.', 'price': '₱ 8,500', 'image': 'assets/herta.jpg', 'category': 'Video Game', 'featured': true},
+    {'name': 'Hatsune Miku v3 1/4', 'price': '₱ 18,000', 'image': 'assets/miku.jpg', 'category': 'Video Game', 'featured': false},
+    {'name': 'Arataki Itto Fichier ST', 'price': '₱ 9,500', 'image': 'assets/itto.jpg', 'category': 'Video Game', 'featured': false},
   ];
 
   List<Map<String, dynamic>> get _filteredProducts {
@@ -119,7 +136,7 @@ class _DashboardPageState extends State<DashboardPage> {
     
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.only(bottom: 120), // Padding to clear the navbar
+      padding: const EdgeInsets.only(bottom: 120),
       child: SafeArea(
         bottom: false,
         child: Column(
@@ -232,7 +249,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget _buildStandardLayout() {
     return Column(
       children: [
-        _buildCategoryRow("Featured", allProducts.take(4).toList()),
+        _buildCategoryRow("Featured", allProducts.where((p) => p['featured'] == true).toList()),
         const SizedBox(height: 30),
         _buildCategoryRow("Anime", allProducts.where((p) => p['category'] == 'Anime').toList()),
         const SizedBox(height: 30),
@@ -289,18 +306,30 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  // --- UPDATED PRODUCT CARD TO BE FULL IMAGE ---
   Widget _buildProductCard(Map<String, dynamic> product, {bool isGrid = false}) {
     return Container(
       width: isGrid ? null : 150,
       margin: isGrid ? null : const EdgeInsets.only(right: 15, bottom: 5),
-      decoration: BoxDecoration(color: const Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E1E1E),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      clipBehavior: Clip.antiAlias, // Ensures image respects the rounded corners
       child: Column(
         children: [
           Expanded(
             flex: 3,
             child: Stack(
               children: [
-                Center(child: Padding(padding: const EdgeInsets.all(10.0), child: Image.asset(product['image'], fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.image_not_supported, color: Colors.white10, size: 50)))),
+                // FULL IMAGE FILL
+                Positioned.fill(
+                  child: Image.asset(
+                    product['image'],
+                    fit: BoxFit.cover, // Ensures image fills the entire area
+                    errorBuilder: (c, o, s) => const Icon(Icons.image_not_supported, color: Colors.white10, size: 50),
+                  ),
+                ),
                 Positioned(
                   top: 10, right: 10, 
                   child: GestureDetector(
@@ -372,14 +401,14 @@ class _DashboardPageState extends State<DashboardPage> {
       onTap: () => setState(() => _selectedIndex = index),
       behavior: HitTestBehavior.translucent,
       child: Container(
-        padding: const EdgeInsets.all(20), // Generous padding for touch target
+        padding: const EdgeInsets.all(20), 
         child: isSelected
             ? ShaderMask(
                 shaderCallback: (bounds) => rainbowGradient.createShader(bounds),
                 child: Image.asset(
                   iconPath, 
-                  color: Colors.white, // Required for ShaderMask
-                  width: 26, // Smaller Active Size
+                  color: Colors.white, 
+                  width: 26, 
                   height: 26,
                   fit: BoxFit.contain
                 ),
@@ -387,7 +416,7 @@ class _DashboardPageState extends State<DashboardPage> {
             : Image.asset(
                 iconPath, 
                 color: Colors.white70, 
-                width: 24, // Smaller Inactive Size
+                width: 24, 
                 height: 24,
                 fit: BoxFit.contain
               ),
