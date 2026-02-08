@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'cart.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -8,318 +9,218 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // Toggle States
-  bool _pushNotifications = true;
-  bool _promoNotifications = false;
+  bool _pushNotifications = false;
 
-  // Shared Rainbow Gradient
   static const Gradient rainbowGradient = LinearGradient(
     colors: [
-      Color(0xFF9C27B0), // Purple
-      Color(0xFFFF4081), // Pink
-      Color(0xFF00E5FF), // Cyan
-      Color(0xFFFFD740), // Gold/Yellow
+      Color(0xFF9C27B0),
+      Color(0xFFFF4081),
+      Color(0xFF00E5FF),
+      Color(0xFFFFD740),
     ],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: Alignment(-0.8, 1.0),
+    end: Alignment(0.8, -1.0),
+    stops: [0.0, 0.5, 0.75, 1.0],
   );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF050011), // Deep Dark Background
+      backgroundColor: const Color(0xFF050011),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text("Profile", style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 15, top: 10),
+          child: Image.asset('assets/logo.png', width: 67, height: 67),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_outlined, color: Colors.white),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 20),
-            
-            // --- PROFILE HEADER (Avatar & Name) ---
+            const SizedBox(height: 10),
             Center(
               child: Column(
                 children: [
-                  // Gradient Border Avatar
                   Container(
-                    padding: const EdgeInsets.all(3), // Border width
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: rainbowGradient,
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.all(2), // Gap between border and image
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xFF050011),
-                      ),
-                      child: const CircleAvatar(
-                        radius: 50,
-                        backgroundImage: AssetImage('assets/character.png'), // Reusing your asset
-                        backgroundColor: Colors.white10,
-                      ),
+                    padding: const EdgeInsets.all(3),
+                    decoration: const BoxDecoration(shape: BoxShape.circle, gradient: rainbowGradient),
+                    child: const CircleAvatar(
+                      radius: 55,
+                      backgroundImage: AssetImage('assets/character.png'),
                     ),
                   ),
                   const SizedBox(height: 15),
-                  
-                  // Gradient Name
                   ShaderMask(
                     shaderCallback: (bounds) => rainbowGradient.createShader(
                       Rect.fromLTWH(0, 0, bounds.width, bounds.height),
                     ),
                     child: const Text(
-                      "Hannah Turin",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                      "Ruan Mei",
+                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ),
-                  const SizedBox(height: 5),
-                  const Text(
-                    "hannah.turin@email.com",
-                    style: TextStyle(color: Colors.grey, fontSize: 14),
-                  ),
-                  const SizedBox(height: 15),
-                  
-                  // Edit Button
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1E1E1E),
-                      foregroundColor: Colors.white,
-                      side: const BorderSide(color: Colors.purpleAccent),
-                      shape: RoundedRectangleBorder(
+                  const Text("ruanmei@gmail.com", style: TextStyle(color: Colors.white70, fontSize: 14)),
+                  const SizedBox(height: 20),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      gradient: rainbowGradient,
+                    ),
+                    padding: const EdgeInsets.all(1.5),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF050011),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                        ),
+                        child: const Text("Edit Profile", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+                      ),
                     ),
-                    child: const Text("Edit Profile"),
                   ),
                 ],
               ),
             ),
-
-            const SizedBox(height: 30),
-
-            // --- CONTENT CARD (Like Splash Screen) ---
+            const SizedBox(height: 40),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(25),
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
               decoration: const BoxDecoration(
-                color: Color(0xFF121212), // Card Color
+                color: Color(0xFF121212),
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(40),
-                  topRight: Radius.circular(40),
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
                 ),
-                border: Border(top: BorderSide(color: Colors.white10)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // SECTION: GENERAL
-                  _buildSectionHeader("GENERAL"),
-                  _buildListTile(icon: Icons.credit_card, title: "Payment Methods", subtitle: "Visa  **34"),
-                  _buildListTile(icon: Icons.location_on_outlined, title: "Locations", subtitle: "2 saved locations"),
-                  _buildListTile(icon: Icons.people_outline, title: "Social Accounts", subtitle: "Facebook, Twitter"),
-
-                  const SizedBox(height: 25),
-
-                  // SECTION: NOTIFICATIONS
-                  _buildSectionHeader("NOTIFICATIONS"),
-                  _buildSwitchTile(
-                    title: "Push Notifications", 
-                    value: _pushNotifications, 
-                    onChanged: (v) => setState(() => _pushNotifications = v)
+                  const Padding(
+                    padding: EdgeInsets.only(left: 5, bottom: 15),
+                    child: Text("GENERAL", style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
                   ),
-                  _buildSwitchTile(
-                    title: "Promotional Notifications", 
-                    value: _promoNotifications, 
-                    onChanged: (v) => setState(() => _promoNotifications = v)
+                  _buildProfileItem(icon: Icons.account_balance_wallet, iconColor: const Color(0xFF2C9335), title: "Payment Methods", subtitle: "Visa **34"),
+                  _buildProfileItem(icon: Icons.location_on, iconColor: const Color(0xFFB19DCC), title: "Location", subtitle: "Angeles City, Pampanga"),
+                  _buildProfileItem(icon: Icons.people, iconColor: const Color(0xFFB19DCC), title: "Social Accounts", subtitle: "Facebook, Instagram"),
+                  _buildPushNotifTile(),
+                  const SizedBox(height: 30),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 5, bottom: 15),
+                    child: Text("MORE", style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
                   ),
-
-                  const SizedBox(height: 25),
-
-                  // SECTION: MORE
-                  _buildSectionHeader("MORE"),
-                  _buildListTile(icon: Icons.help_outline, title: "Contact Us"),
-                  _buildListTile(icon: Icons.logout, title: "Logout", isDestructive: true),
-                  
-                  const SizedBox(height: 20),
+                  _buildProfileItem(icon: Icons.help_outline, iconColor: const Color(0xFFB19DCC), title: "Contact Us"),
+                  _buildProfileItem(icon: Icons.logout, iconColor: const Color(0xFFFA8D8D), title: "Log Out", isLogout: true),
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
           ],
         ),
       ),
-      // --- Bottom Nav (Visual Only for consistency) ---
-      bottomNavigationBar: BottomAppBar(
-        color: const Color(0xFF121212),
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8.0,
-        child: SizedBox(
-          height: 60.0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              IconButton(icon: const Icon(Icons.home_outlined, color: Colors.grey), onPressed: () {}),
-              IconButton(icon: const Icon(Icons.favorite_border, color: Colors.grey), onPressed: () {}),
-              const SizedBox(width: 40), 
-              IconButton(icon: const Icon(Icons.shopping_cart_outlined, color: Colors.grey), onPressed: () {}),
-              // Profile is active here (Purple)
-              IconButton(icon: const Icon(Icons.person, color: Color(0xFF9C27B0)), onPressed: () {}),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: rainbowGradient,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.pinkAccent.withOpacity(0.4),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: FloatingActionButton(
-          onPressed: () {},
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: const Icon(Icons.qr_code_scanner),
-        ),
-      ),
+      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
-  // --- HELPER WIDGETS ---
-
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 15.0),
-      child: Text(
-        title,
-        style: const TextStyle(
-          color: Colors.grey,
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.5,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildListTile({
-    required IconData icon, 
-    required String title, 
-    String? subtitle, 
-    bool isDestructive = false
-  }) {
+  Widget _buildProfileItem({required IconData icon, required Color iconColor, required String title, String? subtitle, bool isLogout = false}) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(15),
-      ),
+      width: double.infinity,
+      height: 47,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(color: const Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(15)),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            width: 32,
+            height: 32,
             decoration: BoxDecoration(
-              color: isDestructive ? Colors.red.withOpacity(0.1) : const Color(0xFF9C27B0).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
+              color: isLogout ? const Color(0xFFFF7A7A).withOpacity(0.22) : Colors.white.withOpacity(0.22),
+              borderRadius: BorderRadius.circular(5),
             ),
-            child: Icon(
-              icon, 
-              color: isDestructive ? Colors.redAccent : const Color(0xFF9C27B0), 
-              size: 20
-            ),
+            child: Icon(icon, color: iconColor, size: 18),
           ),
           const SizedBox(width: 15),
           Expanded(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: isDestructive ? Colors.redAccent : Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                ),
-                if (subtitle != null) ...[
-                  const SizedBox(height: 4),
-                  Text(subtitle, style: const TextStyle(color: Colors.grey, fontSize: 12)),
-                ]
+                Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14)),
+                if (subtitle != null) Text(subtitle, style: const TextStyle(color: Colors.white54, fontSize: 10)),
               ],
             ),
           ),
-          const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 14),
         ],
       ),
     );
   }
 
-  Widget _buildSwitchTile({
-    required String title, 
-    required bool value, 
-    required Function(bool) onChanged
-  }) {
+  Widget _buildPushNotifTile() {
     return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(15),
+      width: double.infinity,
+      height: 47,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(color: const Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(15)),
+      child: Row(
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(color: Colors.white.withOpacity(0.22), borderRadius: BorderRadius.circular(5)),
+            child: const Icon(Icons.notifications, color: Color(0xFFF17D01), size: 18),
+          ),
+          const SizedBox(width: 15),
+          const Expanded(child: Text("Push Notification", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14))),
+          Transform.scale(
+            scale: 0.7,
+            child: Switch(
+              value: _pushNotifications,
+              onChanged: (val) => setState(() => _pushNotifications = val),
+              activeColor: const Color(0xFFB19DCC),
+              activeTrackColor: const Color(0xFF2E2445),
+              inactiveThumbColor: Colors.grey,
+              inactiveTrackColor: Colors.white24,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomNav() {
+    return Container(
+      height: 90,
+      decoration: const BoxDecoration(
+        color: Color(0xFF1B1622),
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(35), topRight: Radius.circular(35)),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.notifications_none, color: Colors.cyanAccent, size: 20),
-              ),
-              const SizedBox(width: 15),
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15,
-                ),
-              ),
-            ],
+          IconButton(
+            icon: const Icon(Icons.home_outlined, color: Colors.white, size: 28),
+            onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
           ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeColor: const Color(0xFFFFD740), // Gold toggle
-            activeTrackColor: Colors.purple.withOpacity(0.5),
+          IconButton(
+            icon: const Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 28),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CartPage(cartItems: []))),
+          ),
+          Container(
+            width: 50,
+            height: 50,
+            decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+            child: ShaderMask(
+              shaderCallback: (bounds) => rainbowGradient.createShader(bounds),
+              child: const Icon(Icons.person, color: Colors.white, size: 30),
+            ),
           ),
         ],
       ),
