@@ -44,10 +44,25 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(3),
-                    decoration: const BoxDecoration(shape: BoxShape.circle, gradient: rainbowGradient),
-                    child: const CircleAvatar(
-                      radius: 55,
-                      backgroundImage: AssetImage('assets/character.png'),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle, 
+                      gradient: rainbowGradient
+                    ),
+                    child: Container(
+                      width: 110, // radius * 2
+                      height: 110,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFF1E1E1E),
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/character.png',
+                          fit: BoxFit.cover,
+                          // Alignment(0, -0.5) moves the "viewing window" up toward the face
+                          alignment: const Alignment(0, -0.5), 
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 15),
