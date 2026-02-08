@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class CartPage extends StatelessWidget {
   final List<Map<String, dynamic>> cartItems;
-  final Function(int)? onRemove; // Callback function
+  final Function(int)? onRemove;
 
   const CartPage({
-    super.key, 
-    this.cartItems = const [], 
+    super.key,
+    this.cartItems = const [],
     this.onRemove,
   });
 
@@ -39,7 +39,8 @@ class CartPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  Image.asset('assets/logo.png', width: 65, height: 65, errorBuilder: (c,o,s) => const Icon(Icons.shopping_cart, color: Colors.white)),
+                  Image.asset('assets/logo.png', width: 65, height: 65, 
+                    errorBuilder: (c, o, s) => const Icon(Icons.shopping_cart, color: Colors.white)),
                   const SizedBox(width: 15),
                   ShaderMask(
                     shaderCallback: (bounds) => rainbowGradient.createShader(
@@ -72,14 +73,12 @@ class CartPage extends StatelessWidget {
                     children: [
                       const SizedBox(height: 60),
                       
-                      // --- CART ITEMS LOGIC ---
                       if (cartItems.isEmpty)
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 100),
                           child: Text("Your cart is empty!", style: TextStyle(color: Colors.white54, fontSize: 16)),
                         )
                       else
-                        // Use a loop to build items with their specific index
                         for (int i = 0; i < cartItems.length; i++)
                           Column(
                             children: [
@@ -123,7 +122,7 @@ class CartPage extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 120), // Bottom spacing for navigation
+            const SizedBox(height: 120),
           ],
         ),
       ),
@@ -146,33 +145,59 @@ class CartPage extends StatelessWidget {
 
   Widget _buildCartItem(Map<String, dynamic> item, int index) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       child: Row(
         children: [
+          // 85x85 Container with 5px uneven gradient border
           Container(
-            width: 72, height: 72,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(colors: [Color(0xFFB19DCC), Color(0xFF121212)], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+            width: 85,
+            height: 85,
+            padding: const EdgeInsets.all(5), // 5px border thickness
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              gradient: const LinearGradient(
+                colors: [Color(0xFFB19DCC), Color(0xFF121212)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                stops: [0.0, 0.6], // Purple highlight ends quickly for uneven ratio
+              ),
             ),
-            child: Center(child: Image.asset(item['image'], width: 63, height: 63, errorBuilder: (c, o, s) => const Icon(Icons.image, color: Colors.white))),
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF121212), 
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  item['image'],
+                  fit: BoxFit.cover, 
+                  // Aligns focus to topCenter to better capture faces/product tops
+                  alignment: Alignment.topCenter, 
+                  errorBuilder: (c, o, s) => const Icon(Icons.image, color: Colors.white24),
+                ),
+              ),
+            ),
           ),
           const SizedBox(width: 15),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item['name'], style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
+                Text(item['name'], 
+                  style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold), 
+                  maxLines: 1, 
+                  overflow: TextOverflow.ellipsis),
                 const Text("1 piece", style: TextStyle(color: Colors.white70, fontSize: 11)),
               ],
             ),
           ),
-          // REMOVE BUTTON
           IconButton(
             onPressed: () => onRemove?.call(index),
             icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 22),
           ),
-          Text(item['price'], style: const TextStyle(color: Color(0xFFB19DCC), fontSize: 13, fontWeight: FontWeight.bold)),
+          Text(item['price'], 
+            style: const TextStyle(color: Color(0xFFB19DCC), fontSize: 13, fontWeight: FontWeight.bold)),
         ],
       ),
     );
