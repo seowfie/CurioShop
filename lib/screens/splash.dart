@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'login.dart'; // Import the login page so we can navigate to it
 
-
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
-
 
   // Keep the gradient here for the Splash text/button
   static const Gradient rainbowGradient = LinearGradient(
@@ -18,14 +16,13 @@ class SplashScreen extends StatelessWidget {
     end: Alignment.bottomRight,
   );
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF050011),
       body: Stack(
         children: [
-          // Background Glow
+          // 1. Background Glow
           Positioned(
             top: -100,
             right: -100,
@@ -45,6 +42,26 @@ class SplashScreen extends StatelessWidget {
               ),
             ),
           ),
+
+          // 2. LOGO (Top Left)
+          Positioned(
+            top: 0,
+            left: 0,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20.0, top: 20.0),
+                child: Image.asset(
+                  'assets/logo.png',
+                  height: 50, // Adjust size as needed
+                  fit: BoxFit.contain,
+                  // Fallback icon if image fails to load
+                  errorBuilder: (c, o, s) => const Icon(Icons.star, color: Colors.white, size: 40),
+                ),
+              ),
+            ),
+          ),
+
+          // 3. Main Content
           Column(
             children: [
               Expanded(
@@ -101,7 +118,7 @@ class SplashScreen extends StatelessWidget {
                           Rect.fromLTWH(0, 0, bounds.width, bounds.height),
                         ),
                         child: const Text(
-                          "Expert People",
+                          "Shop the Figures You Love",
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
@@ -112,7 +129,7 @@ class SplashScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       const Text(
-                        "We have the best in class individuals working just for you.",
+                        "Explore high-quality figurines and bring your favorite characters home with just a few taps.",
                         style: TextStyle(color: Colors.grey, fontSize: 16, height: 1.5),
                       ),
                       const Spacer(),
@@ -132,7 +149,6 @@ class SplashScreen extends StatelessWidget {
                         ),
                         child: ElevatedButton(
                           onPressed: () {
-                            // Navigate to the LoginPage imported from login.dart
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => const LoginPage()),
