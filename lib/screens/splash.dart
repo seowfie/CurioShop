@@ -52,9 +52,8 @@ class SplashScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 20.0, top: 20.0),
                 child: Image.asset(
                   'assets/logo.png',
-                  height: 50, // Adjust size as needed
+                  height: 50,
                   fit: BoxFit.contain,
-                  // Fallback icon if image fails to load
                   errorBuilder: (c, o, s) => const Icon(Icons.star, color: Colors.white, size: 40),
                 ),
               ),
@@ -100,7 +99,8 @@ class SplashScreen extends StatelessWidget {
                 flex: 2,
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(30),
+                  // --- FIX: Reduced vertical padding from 30 to 20 to solve overflow ---
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
                   decoration: const BoxDecoration(
                     color: Color(0xFF121212),
                     borderRadius: BorderRadius.only(
