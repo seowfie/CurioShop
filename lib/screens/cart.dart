@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class CartPage extends StatelessWidget {
   final List<Map<String, dynamic>> cartItems;
   final Function(int)? onRemove;
+  final VoidCallback? onCheckout;
 
   const CartPage({
     super.key,
     this.cartItems = const [],
     this.onRemove,
+    this.onCheckout,
   });
 
   static const Gradient rainbowGradient = LinearGradient(
@@ -130,15 +132,18 @@ class CartPage extends StatelessWidget {
   }
 
   Widget _buildCheckoutButton() {
-    return Container(
-      width: 198, height: 61,
-      decoration: BoxDecoration(
-        gradient: rainbowGradient,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: const Color(0xFFFF4081).withOpacity(0.5), offset: const Offset(0, 4), blurRadius: 6)],
-      ),
-      child: const Center(
-        child: Text("Checkout", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+    return GestureDetector(
+      onTap: () => onCheckout?.call(),
+      child: Container(
+        width: 198, height: 61,
+        decoration: BoxDecoration(
+          gradient: rainbowGradient,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [BoxShadow(color: const Color(0xFFFF4081).withOpacity(0.5), offset: const Offset(0, 4), blurRadius: 6)],
+        ),
+        child: const Center(
+          child: Text("Checkout", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+        ),
       ),
     );
   }
