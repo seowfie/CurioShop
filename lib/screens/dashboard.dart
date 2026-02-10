@@ -381,10 +381,10 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  // --- NAVBAR CODE BEGINS ---
+  // --- NAVBAR ---
   Widget _buildCustomBottomNavBar() {
     return Container(
-      height: 80, // INCREASED HEIGHT from 70 to 80 to fit "higher" position
+      height: 80, 
       decoration: const BoxDecoration(
         color: Color(0xFF1A1A2E), 
         borderRadius: BorderRadius.only(
@@ -422,14 +422,14 @@ class _DashboardPageState extends State<DashboardPage> {
       onTap: () => setState(() => _selectedIndex = index),
       behavior: HitTestBehavior.translucent,
       child: Container(
-        padding: const EdgeInsets.all(12), // Reduced padding to make icon BIGGER
+        padding: const EdgeInsets.all(12), 
         child: isSelected
             ? ShaderMask(
                 shaderCallback: (bounds) => rainbowGradient.createShader(bounds),
                 child: Image.asset(
                   iconPath, 
                   color: Colors.white, 
-                  width: 32, // BIGGER ACTIVE ICON (was 26)
+                  width: 32, 
                   height: 32,
                   fit: BoxFit.contain
                 ),
@@ -437,12 +437,12 @@ class _DashboardPageState extends State<DashboardPage> {
             : Image.asset(
                 iconPath, 
                 color: Colors.white70, 
-                width: 28, // BIGGER INACTIVE ICON (was 24)
+                width: 28, 
                 height: 28,
                 fit: BoxFit.contain
               ),
       ),
     );
   }
-  // --- NAVBAR CODE ENDS ---
 }
+
