@@ -74,7 +74,9 @@ class _DashboardPageState extends State<DashboardPage> {
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("${product['name']} added to cart!"),
+        content: Text("${product['name']} added to cart!",
+        style: const TextStyle(color: Colors.white),
+        ),
         duration: const Duration(milliseconds: 800),
         backgroundColor: const Color(0xFF9C27B0),
       ),
