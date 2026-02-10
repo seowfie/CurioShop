@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'cart.dart';
-import 'login.dart'; // Import Login Page
+import 'login.dart'; 
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -50,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       gradient: rainbowGradient
                     ),
                     child: Container(
-                      width: 110, // radius * 2
+                      width: 110, 
                       height: 110,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
@@ -147,8 +147,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       ),
-      // Note: In your dashboard structure, this bottom nav might be redundant if ProfilePage is inside the Dashboard IndexedStack.
-      // But I kept it here as requested in your code snippet.
       bottomNavigationBar: _buildBottomNav(),
     );
   }
@@ -161,7 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const LoginPage()),
-            (route) => false, // This removes all previous routes (clears back stack)
+            (route) => false, 
           );
         }
       },
@@ -264,4 +262,5 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
+
 
