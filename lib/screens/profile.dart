@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'cart.dart';
+import 'login.dart'; // Import Login Page
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -59,7 +60,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: Image.asset(
                           'assets/character.png',
                           fit: BoxFit.cover,
-                          // Alignment(0, -0.5) moves the "viewing window" up toward the face
                           alignment: const Alignment(0, -0.5), 
                         ),
                       ),
@@ -131,7 +131,15 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Text("MORE", style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
                   ),
                   _buildProfileItem(icon: Icons.help_outline, iconColor: const Color(0xFFB19DCC), title: "Contact Us"),
-                  _buildProfileItem(icon: Icons.logout, iconColor: const Color(0xFFFA8D8D), title: "Log Out", isLogout: true),
+                  
+                  // --- LOG OUT BUTTON ---
+                  _buildProfileItem(
+                    icon: Icons.logout, 
+                    iconColor: const Color(0xFFFA8D8D), 
+                    title: "Log Out", 
+                    isLogout: true
+                  ),
+                  
                   const SizedBox(height: 100),
                 ],
               ),
@@ -139,40 +147,54 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       ),
+      // Note: In your dashboard structure, this bottom nav might be redundant if ProfilePage is inside the Dashboard IndexedStack.
+      // But I kept it here as requested in your code snippet.
       bottomNavigationBar: _buildBottomNav(),
     );
   }
 
   Widget _buildProfileItem({required IconData icon, required Color iconColor, required String title, String? subtitle, bool isLogout = false}) {
-    return Container(
-      width: double.infinity,
-      height: 47,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(color: const Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(15)),
-      child: Row(
-        children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: isLogout ? const Color(0xFFFF7A7A).withOpacity(0.22) : Colors.white.withOpacity(0.22),
-              borderRadius: BorderRadius.circular(5),
+    return GestureDetector(
+      onTap: () {
+        if (isLogout) {
+          // --- NAVIGATION LOGIC FOR LOGOUT ---
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+            (route) => false, // This removes all previous routes (clears back stack)
+          );
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        height: 47,
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(color: const Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(15)),
+        child: Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: isLogout ? const Color(0xFFFF7A7A).withOpacity(0.22) : Colors.white.withOpacity(0.22),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Icon(icon, color: iconColor, size: 18),
             ),
-            child: Icon(icon, color: iconColor, size: 18),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14)),
-                if (subtitle != null) Text(subtitle, style: const TextStyle(color: Colors.white54, fontSize: 10)),
-              ],
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14)),
+                  if (subtitle != null) Text(subtitle, style: const TextStyle(color: Colors.white54, fontSize: 10)),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -242,3 +264,4 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
+
