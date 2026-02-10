@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # Removed flutter_launcher_icons from here (moved to dev_dependencies)
 
   cupertino_icons: ^1.0.8
   google_fonts: ^6.1.0
@@ -19,7 +18,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  # Moved here because it is a developer tool
   flutter_launcher_icons: ^0.13.1
 
 # --- FLUTTER SECTION ---
@@ -29,9 +27,9 @@ flutter:
     - assets/
 
 # --- LAUNCHER ICONS CONFIGURATION ---
-# This must be at the root level (no spaces at the start)
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/logo.png"
   min_sdk_android: 21
+
