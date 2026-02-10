@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'login.dart'; // Import the login page so we can navigate to it
+import 'login.dart'; 
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
-  // Keep the gradient here for the Splash text/button
+  // Gradient for the Splash text/button
   static const Gradient rainbowGradient = LinearGradient(
     colors: [
       Color(0xFF9C27B0),
@@ -99,7 +99,6 @@ class SplashScreen extends StatelessWidget {
                 flex: 2,
                 child: Container(
                   width: double.infinity,
-                  // --- FIX: Reduced vertical padding from 30 to 20 to solve overflow ---
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
                   decoration: const BoxDecoration(
                     color: Color(0xFF121212),
@@ -177,3 +176,4 @@ class SplashScreen extends StatelessWidget {
     );
   }
 }
+
