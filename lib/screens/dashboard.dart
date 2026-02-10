@@ -74,9 +74,7 @@ class _DashboardPageState extends State<DashboardPage> {
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("${product['name']} added to cart!",
-        style: const TextStyle(color: Colors.white),
-        ),
+        content: Text("${product['name']} added to cart!", style: TextStyle(color: Colors.white)),
         duration: const Duration(milliseconds: 800),
         backgroundColor: const Color(0xFF9C27B0),
       ),
@@ -88,9 +86,9 @@ class _DashboardPageState extends State<DashboardPage> {
       _cartItems.removeAt(index);
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Item removed from cart"),
-        duration: Duration(milliseconds: 600),
+      SnackBar(
+        content: const Text("Item removed from cart", style: TextStyle(color: Colors.white)),
+        duration: const Duration(milliseconds: 600),
         backgroundColor: Colors.redAccent,
       ),
     );
@@ -112,6 +110,30 @@ class _DashboardPageState extends State<DashboardPage> {
                 CartPage(
                   cartItems: _cartItems, 
                   onRemove: _removeFromCart,
+                  onCheckout: () {
+                    setState(() {
+                      _cartItems.clear();
+                      _selectedIndex = 0; // return to dashboard/home tab
+                    });
+
+                    // Show a MaterialBanner confirming checkout, then remove it
+                    ScaffoldMessenger.of(context).showMaterialBanner(
+                      MaterialBanner(
+                        content: const Text('Successfully checked out items!', style: TextStyle(color: Colors.white)),
+                        backgroundColor: const Color(0xFF9C27B0),
+                        actions: [
+                          TextButton(
+                            onPressed: () => ScaffoldMessenger.of(context).removeCurrentMaterialBanner(),
+                            child: const Text('OK', style: TextStyle(color: Colors.white)),
+                          ),
+                        ],
+                      ),
+                    );
+
+                    Future.delayed(const Duration(seconds: 2), () {
+                      ScaffoldMessenger.of(context).removeCurrentMaterialBanner();
+                    });
+                  },
                 ),
                 const ProfilePage(),        
               ],
