@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart'; // Add this import
+import 'package:google_fonts/google_fonts.dart'; 
 import 'screens/splash.dart'; 
 
 void main() {
@@ -16,7 +16,6 @@ class CurioStoreApp extends StatelessWidget {
       title: 'CurioStore',
       theme: ThemeData(
         brightness: Brightness.dark,
-        // This line applies DM Sans to every Text widget in your app automatically
         textTheme: GoogleFonts.dmSansTextTheme(
           Theme.of(context).textTheme,
         ),
@@ -25,3 +24,4 @@ class CurioStoreApp extends StatelessWidget {
     );
   }
 }
+
