@@ -111,6 +111,8 @@ class _DashboardPageState extends State<DashboardPage> {
                   cartItems: _cartItems, 
                   onRemove: _removeFromCart,
                   onCheckout: () {
+                    String message = _cartItems.isEmpty ? 'Your cart is empty!' : 'Successfully checked out items!';
+                    
                     setState(() {
                       _cartItems.clear();
                       _selectedIndex = 0; // return to dashboard/home tab
@@ -119,7 +121,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     // Show a MaterialBanner confirming checkout, then remove it
                     ScaffoldMessenger.of(context).showMaterialBanner(
                       MaterialBanner(
-                        content: const Text('Successfully checked out items!', style: TextStyle(color: Colors.white)),
+                        content: Text(message, style: const TextStyle(color: Colors.white)),
                         backgroundColor: const Color(0xFF9C27B0),
                         actions: [
                           TextButton(
