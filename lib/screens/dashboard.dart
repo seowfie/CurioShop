@@ -74,7 +74,7 @@ class _DashboardPageState extends State<DashboardPage> {
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("${product['name']} added to cart!", style: TextStyle(color: Colors.white)),
+        content: Text("${product['name']} added to cart!", style: const TextStyle(color: Colors.white)),
         duration: const Duration(milliseconds: 800),
         backgroundColor: const Color(0xFF9C27B0),
       ),
@@ -86,9 +86,9 @@ class _DashboardPageState extends State<DashboardPage> {
       _cartItems.removeAt(index);
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text("Item removed from cart", style: TextStyle(color: Colors.white)),
-        duration: const Duration(milliseconds: 600),
+      const SnackBar(
+        content: Text("Item removed from cart", style: TextStyle(color: Colors.white)),
+        duration: Duration(milliseconds: 600),
         backgroundColor: Colors.redAccent,
       ),
     );
@@ -112,13 +112,10 @@ class _DashboardPageState extends State<DashboardPage> {
                   onRemove: _removeFromCart,
                   onCheckout: () {
                     String message = _cartItems.isEmpty ? 'Your cart is empty!' : 'Successfully checked out items!';
-                    
                     setState(() {
                       _cartItems.clear();
-                      _selectedIndex = 0; // return to dashboard/home tab
+                      _selectedIndex = 0; 
                     });
-
-                    // Show a MaterialBanner confirming checkout, then remove it
                     ScaffoldMessenger.of(context).showMaterialBanner(
                       MaterialBanner(
                         content: Text(message, style: const TextStyle(color: Colors.white)),
@@ -131,7 +128,6 @@ class _DashboardPageState extends State<DashboardPage> {
                         ],
                       ),
                     );
-
                     Future.delayed(const Duration(seconds: 2), () {
                       ScaffoldMessenger.of(context).removeCurrentMaterialBanner();
                     });
@@ -332,7 +328,6 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  // --- UPDATED PRODUCT CARD TO BE FULL IMAGE ---
   Widget _buildProductCard(Map<String, dynamic> product, {bool isGrid = false}) {
     return Container(
       width: isGrid ? null : 150,
@@ -341,18 +336,17 @@ class _DashboardPageState extends State<DashboardPage> {
         color: const Color(0xFF1E1E1E),
         borderRadius: BorderRadius.circular(20),
       ),
-      clipBehavior: Clip.antiAlias, // Ensures image respects the rounded corners
+      clipBehavior: Clip.antiAlias, 
       child: Column(
         children: [
           Expanded(
             flex: 3,
             child: Stack(
               children: [
-                // FULL IMAGE FILL
                 Positioned.fill(
                   child: Image.asset(
                     product['image'],
-                    fit: BoxFit.cover, // Ensures image fills the entire area
+                    fit: BoxFit.cover, 
                     errorBuilder: (c, o, s) => const Icon(Icons.image_not_supported, color: Colors.white10, size: 50),
                   ),
                 ),
@@ -387,12 +381,10 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  // ==========================================
-  // FLAT CUSTOM NAVBAR
-  // ==========================================
+  // --- NAVBAR CODE BEGINS ---
   Widget _buildCustomBottomNavBar() {
     return Container(
-      height: 90, 
+      height: 80, // INCREASED HEIGHT from 70 to 80 to fit "higher" position
       decoration: const BoxDecoration(
         color: Color(0xFF1A1A2E), 
         borderRadius: BorderRadius.only(
@@ -408,13 +400,16 @@ class _DashboardPageState extends State<DashboardPage> {
         ],
       ),
       child: SafeArea(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNavItem(0, 'assets/home.png'),
-            _buildNavItem(1, 'assets/cart.png'),
-            _buildNavItem(2, 'assets/profile.png'),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 12.0), // PUSHES ICONS HIGHER
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(0, 'assets/home.png'),
+              _buildNavItem(1, 'assets/cart.png'),
+              _buildNavItem(2, 'assets/profile.png'),
+            ],
+          ),
         ),
       ),
     );
@@ -427,26 +422,27 @@ class _DashboardPageState extends State<DashboardPage> {
       onTap: () => setState(() => _selectedIndex = index),
       behavior: HitTestBehavior.translucent,
       child: Container(
-        padding: const EdgeInsets.all(20), 
+        padding: const EdgeInsets.all(12), // Reduced padding to make icon BIGGER
         child: isSelected
             ? ShaderMask(
                 shaderCallback: (bounds) => rainbowGradient.createShader(bounds),
                 child: Image.asset(
                   iconPath, 
                   color: Colors.white, 
-                  width: 26, 
-                  height: 26,
+                  width: 32, // BIGGER ACTIVE ICON (was 26)
+                  height: 32,
                   fit: BoxFit.contain
                 ),
               )
             : Image.asset(
                 iconPath, 
                 color: Colors.white70, 
-                width: 24, 
-                height: 24,
+                width: 28, // BIGGER INACTIVE ICON (was 24)
+                height: 28,
                 fit: BoxFit.contain
               ),
       ),
     );
   }
+  // --- NAVBAR CODE ENDS ---
 }
